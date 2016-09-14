@@ -14,21 +14,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Rules"
-        android:id="@+id/button"
+        android:id="@+id/rules"
         android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/button2"
+        android:layout_alignStart="@+id/play"
         android:layout_marginBottom="167dp"
-        android:layout_alignEnd="@+id/button2" />
+        android:layout_alignEnd="@+id/play"
+        android:minHeight="75dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Play"
-        android:id="@+id/button2"
+        android:id="@+id/play"
         android:minWidth="200dp"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="129dp" />
+        android:layout_marginTop="129dp"
+        android:minHeight="75dp" />
 
     <TextView
         android:layout_width="wrap_content"
