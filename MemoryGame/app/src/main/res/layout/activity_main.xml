@@ -19,7 +19,8 @@
         android:layout_alignStart="@+id/play"
         android:layout_marginBottom="167dp"
         android:layout_alignEnd="@+id/play"
-        android:minHeight="75dp" />
+        android:minHeight="75dp"
+        android:onClick="showRules"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -30,7 +31,8 @@
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="129dp"
-        android:minHeight="75dp" />
+        android:minHeight="75dp"
+        android:onClick="startGame"/>
 
     <TextView
         android:layout_width="wrap_content"

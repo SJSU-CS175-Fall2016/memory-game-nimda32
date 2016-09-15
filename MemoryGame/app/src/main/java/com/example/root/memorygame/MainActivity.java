@@ -1,10 +1,10 @@
 package com.example.root.memorygame;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.View;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -19,21 +19,19 @@ public class MainActivity extends AppCompatActivity {
 // startActivityForResult
 //    on activi
 
-//    btn = (Button)findViewById(R.id.open_activity_button);
-//
-//    btn.setOnClickListener(new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//            startActivity(new Intent(MainActivity.this, MyOtherActivity.class));
-//        }
-//    });
-
 // to start activity you need an intent
 //    openDemo()View view
 //    intent demointenet= new intent this,demoactivity.class
 //demointent.putextra(bsad,dsads);
 //    startactivity(demoactivity
 
+    public void startGame(View v){
+        startActivity(new Intent(MainActivity.this, GameActivity.class));
+    }
+
+    public void showRules(View v){
+        startActivity(new Intent(MainActivity.this, RulesActivity.class));
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
