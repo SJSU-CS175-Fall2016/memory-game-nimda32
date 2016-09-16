@@ -1,87 +1,173 @@
 package com.example.root.memorygame;
 
-import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.TypedValue;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity{
+
+    int points = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
         setContentView(R.layout.activity_game);
 
-        List<Integer> images = new ArrayList(20);
+
+        List<Integer> imageIDs = new ArrayList(20);
 
         //
+        // Add image IDs to list
         //
-        //
-        for(int i = 0 ; i <= 2; i++){
+        for(int i = 0 ; i < 2; i++){
 
-            images.add(R.drawable.i1);
-            images.add(R.drawable.i2);
-            images.add(R.drawable.i3);
-            images.add(R.drawable.i4);
-            images.add(R.drawable.i5);
-            images.add(R.drawable.i6);
-            images.add(R.drawable.i7);
-            images.add(R.drawable.i8);
-            images.add(R.drawable.i9);
-            images.add(R.drawable.i10);
+            imageIDs.add(R.drawable.i1);
+            imageIDs.add(R.drawable.i2);
+            imageIDs.add(R.drawable.i3);
+            imageIDs.add(R.drawable.i4);
+            imageIDs.add(R.drawable.i5);
+            imageIDs.add(R.drawable.i6);
+            imageIDs.add(R.drawable.i7);
+            imageIDs.add(R.drawable.i8);
+            imageIDs.add(R.drawable.i9);
+            imageIDs.add(R.drawable.i10);
 
         }
-
-
-//        images.add(ResourcesCompat.getDrawable(getResources(), R.drawable.i1, null));
+        // Shuffle image IDs
         //
-        // randomly assign images to ImageButtons
+        Collections.shuffle(imageIDs);
+
         //
-        Random ra = new Random();
+        // Iterator for randomized images
+        //
+        final Iterator<Integer> imgIt = imageIDs.iterator();
+
+        //
+        //
+        // HashMap for keeping the hidden resources "behind" the button
+        //
+        final HashMap<ImageButton, Integer> hidden_images = new HashMap<>(20);
+
+        TableLayout tl = (TableLayout) findViewById(R.id.tableLayout);
+
+        //
+        // Array of game buttons
+        //
         ImageButton[] imgButtons = new ImageButton[20];
-        GridLayout gl = (GridLayout) findViewById(R.id.layout);
-        int wh = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
 
-        for (int i = 0; i < 20; i++) {
+        final List<ImageButton> selectedList = new ArrayList(2);
 
-            int rand = ra.nextInt(20);
+        int rows = 5;
+        int cols = 4;
 
-            imgButtons[i] = new ImageButton(this);
-            imgButtons[i].setImageResource(images.get(rand));
-//            imgButtons[i].setLayoutParams(new GridLayout.LayoutParams());  NEED TO ADD PARAM TO FIX size of images!
-            imgButtons[i].setOnClickListener(match);
-//            imgButtons[i].setBackgroundColor(Color.TRANSPARENT);
-            imgButtons[i].setTag(i);
-            imgButtons[i].setId(i);
+        Random ran = new Random(1000);
 
-            gl.addView(imgButtons[i]);
+        for ( int i = 0  ;  i < rows  ;  i++ ) {
+
+            TableRow tr = new TableRow(this);
+
+            for ( int j = 0  ;  j < cols  ;  j++ ) {
+
+                imgButtons[i] = new ImageButton(this); //might not need this
+
+                imgButtons[i].setId(ran.nextInt(1000));
+                //
+                // Set pre-clicked picture
+                //
+                imgButtons[i].setBackgroundResource(R.drawable.hiddenx);
+
+                hidden_images.put(imgButtons[i], imgIt.next());
 
 
-            //  ImageButton imgButton = (ImageButton) getViewById();
-            //  image_count.put();
 
+                imgButtons[i].setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        ImageButton button = (ImageButton ) v;
+
+
+                            button.setBackgroundResource(
+                                    hidden_images.get(v)
+                            );
+
+                            if (selectedList.isEmpty()) {
+
+                                selectedList.add(button);
+
+                            } else if (hidden_images.get(selectedList.get(0)).equals(hidden_images.get(button))) { //and their ID's are not the same
+                                Log.v("TRUE!", "ids matched!");
+
+//                            selectedList.get(0).getButtonDrawable().equals(button.getButtonDrawable())
+                                 points++;
+
+                                ImageButton secondButton = selectedList.get(0);
+                                secondButton.setBackgroundResource(
+                                        hidden_images.get(secondButton)
+                                );
+
+
+
+                                secondButton.setEnabled(false);
+                                button.setEnabled(false);
+
+                                secondButton.setBackgroundResource(R.drawable.check);
+                                button.setBackgroundResource(R.drawable.check);
+                                selectedList.remove(0);
+
+                            } else {
+                                Log.v("Not equal", "second button:" + hidden_images.get(selectedList.get(0))+"|button"+hidden_images.get(button));
+
+                                points--;
+
+                                ImageButton secondButton = selectedList.get(0);
+
+
+                                button.setBackgroundResource(
+                                        hidden_images.get(button)
+                                );
+
+
+//                                ContextCompat.getDrawable(GameActivity.this, hidden_images.get(secondButton))
+
+
+//                                secondButton.setBackgroundResource(R.drawable.hiddenx);
+//                                button.setBackgroundResource(R.drawable.hiddenx);
+                                selectedList.remove(0);
+
+                            }
+
+
+
+                    }
+                });
+
+                tr.addView(imgButtons[i]);
+
+            }
+
+            tl.addView(tr);
 
         }
 
     }
 
-    View.OnClickListener match = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+//            ImageButton.setImageDrawable(someDrawable)
+//            ImageButton.getDrawable().getConstantState().equals(other thing)
+//            getResources.getDrawable(R.drawable.drawable)
 
-        }
-    };
 
 }

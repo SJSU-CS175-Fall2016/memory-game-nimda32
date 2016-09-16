@@ -28,11 +28,11 @@
         android:text="Play"
         android:id="@+id/play"
         android:minWidth="200dp"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="129dp"
+        android:layout_marginTop="50dp"
         android:minHeight="75dp"
-        android:onClick="startGame"/>
+        android:onClick="startGame"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
