@@ -1,8 +1,6 @@
 package com.example.root.memorygame;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -15,7 +13,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 public class GameActivity extends AppCompatActivity{
 
@@ -43,8 +40,6 @@ public class GameActivity extends AppCompatActivity{
 
 
     }
-
-
 
 
     public void loadImages(){
