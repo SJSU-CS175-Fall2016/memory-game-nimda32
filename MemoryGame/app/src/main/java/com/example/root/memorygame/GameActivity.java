@@ -21,14 +21,33 @@ public class GameActivity extends AppCompatActivity{
 
     int points = 0;
 
+    List<Integer> imageIDs = new ArrayList(20);
+    final Iterator<Integer> imgIt = imageIDs.iterator();
+    //
+    //
+    // HashMap for keeping the hidden resources "behind" the button
+    //
+    final HashMap<ImageButton, Integer> hidden_images = new HashMap<>(20);
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
 
-        List<Integer> imageIDs = new ArrayList(20);
+        loadImages();
 
+        createGameButtons();
+
+
+
+    }
+
+
+
+
+    public void loadImages(){
         //
         // Add image IDs to list
         //
@@ -46,34 +65,28 @@ public class GameActivity extends AppCompatActivity{
             imageIDs.add(R.drawable.i10);
 
         }
-        // Shuffle image IDs
-        //
+
         Collections.shuffle(imageIDs);
+    }
+
+    public void createGameButtons(){
 
         //
-        // Iterator for randomized images
-        //
-        final Iterator<Integer> imgIt = imageIDs.iterator();
-
-        //
-        //
-        // HashMap for keeping the hidden resources "behind" the button
-        //
-        final HashMap<ImageButton, Integer> hidden_images = new HashMap<>(20);
-
-        TableLayout tl = (TableLayout) findViewById(R.id.tableLayout);
-
-        //
-        // Array of game buttons
+        // game buttons
         //
         ImageButton[] imgButtons = new ImageButton[20];
 
+        //
+        // selected buttons
+        //
+
         final List<ImageButton> selectedList = new ArrayList(2);
 
+        TableLayout tl = (TableLayout) findViewById(R.id.tableLayout);
+
+        int count = 0;
         int rows = 5;
         int cols = 4;
-
-        Random ran = new Random(1000);
 
         for ( int i = 0  ;  i < rows  ;  i++ ) {
 
@@ -81,14 +94,19 @@ public class GameActivity extends AppCompatActivity{
 
             for ( int j = 0  ;  j < cols  ;  j++ ) {
 
-                imgButtons[i] = new ImageButton(this); //might not need this
+                imgButtons[i] = new ImageButton(this);
 
-                imgButtons[i].setId(ran.nextInt(1000));
+                imgButtons[i].setId(count++);
+
                 //
-                // Set pre-clicked picture
+                // set preclicked image
                 //
                 imgButtons[i].setBackgroundResource(R.drawable.hiddenx);
 
+
+                //
+                // store image ID and button to check matches later
+                //
                 hidden_images.put(imgButtons[i], imgIt.next());
 
 
@@ -100,55 +118,53 @@ public class GameActivity extends AppCompatActivity{
                         ImageButton button = (ImageButton ) v;
 
 
-                            button.setBackgroundResource(
-                                    hidden_images.get(v)
-                            );
+                        button.setBackgroundResource(
+                                hidden_images.get(v)
+                        );
 
-                            if (selectedList.isEmpty()) {
+                        if (selectedList.isEmpty()) {
 
-                                selectedList.add(button);
+                            selectedList.add(button);
 
-                            } else if (hidden_images.get(selectedList.get(0)).equals(hidden_images.get(button))) { //and their ID's are not the same
-                                Log.v("TRUE!", "ids matched!");
+                        } else if (hidden_images.get(selectedList.get(0)).equals(hidden_images.get(button))) { //and their ID's are not the same
+                            Log.v("TRUE!", "ids matched!");
 
 //                            selectedList.get(0).getButtonDrawable().equals(button.getButtonDrawable())
-                                 points++;
+                            points++;
 
-                                ImageButton secondButton = selectedList.get(0);
-                                secondButton.setBackgroundResource(
-                                        hidden_images.get(secondButton)
-                                );
-
-
-
-                                secondButton.setEnabled(false);
-                                button.setEnabled(false);
-
-                                secondButton.setBackgroundResource(R.drawable.check);
-                                button.setBackgroundResource(R.drawable.check);
-                                selectedList.remove(0);
-
-                            } else {
-                                Log.v("Not equal", "second button:" + hidden_images.get(selectedList.get(0))+"|button"+hidden_images.get(button));
-
-                                points--;
-
-                                ImageButton secondButton = selectedList.get(0);
+                            ImageButton secondButton = selectedList.get(0);
+                            secondButton.setBackgroundResource(
+                                    hidden_images.get(secondButton)
+                            );
 
 
-                                button.setBackgroundResource(
-                                        hidden_images.get(button)
-                                );
+                            secondButton.setEnabled(false);
+                            button.setEnabled(false);
 
+                            secondButton.setBackgroundResource(R.drawable.check);
+                            button.setBackgroundResource(R.drawable.check);
+                            selectedList.remove(0);
+
+                        } else {
+                            Log.v("Not equal", "second button:" + hidden_images.get(selectedList.get(0))+"|button"+hidden_images.get(button));
+
+                            points--;
+
+                            ImageButton secondButton = selectedList.get(0);
+
+
+                            button.setBackgroundResource(
+                                    hidden_images.get(button)
+                            );
 
 //                                ContextCompat.getDrawable(GameActivity.this, hidden_images.get(secondButton))
 
 
-//                                secondButton.setBackgroundResource(R.drawable.hiddenx);
-//                                button.setBackgroundResource(R.drawable.hiddenx);
-                                selectedList.remove(0);
+                            secondButton.setBackgroundResource(R.drawable.hiddenx);
+                            button.setBackgroundResource(R.drawable.hiddenx);
+                            selectedList.remove(0);
 
-                            }
+                        }
 
 
 
@@ -164,10 +180,5 @@ public class GameActivity extends AppCompatActivity{
         }
 
     }
-
-//            ImageButton.setImageDrawable(someDrawable)
-//            ImageButton.getDrawable().getConstantState().equals(other thing)
-//            getResources.getDrawable(R.drawable.drawable)
-
 
 }
