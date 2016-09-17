@@ -1,52 +1,65 @@
 package com.example.root.memorygame;
 
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.CorrectionInfo;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
-public class GameActivity extends AppCompatActivity{
+public class GameActivity extends AppCompatActivity {
+
 
     int points = 0;
+    int reveal_time = 500;
 
-    List<Integer> imageIDs = new ArrayList(20);
-    final Iterator<Integer> imgIt = imageIDs.iterator();
-    //
-    //
-    // HashMap for keeping the hidden resources "behind" the button
-    //
-    final HashMap<ImageButton, Integer> hidden_images = new HashMap<>(20);
+    ArrayList<Integer> imageIDs = new ArrayList(20);
+
+    LinkedList<ImageButton> correctButtons = new LinkedList<>();
+
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
 
         loadImages();
 
-        createGameButtons();
-
+        createGame();
 
 
     }
 
+    //*****************************************
+    //
+    //  void loadImages
+    //
+    //      Description:
+    //
+    //          Loads Images from files into ArrayList
+    //
+    //
+    //****************************************
 
-    public void loadImages(){
+    public void loadImages() {
+
         //
-        // Add image IDs to list
+        // Add image IDs to imgIDs list
         //
-        for(int i = 0 ; i < 2; i++){
+        for (int i = 0; i < 2; i++) {
 
             imageIDs.add(R.drawable.i1);
             imageIDs.add(R.drawable.i2);
@@ -62,109 +75,191 @@ public class GameActivity extends AppCompatActivity{
         }
 
         Collections.shuffle(imageIDs);
+
     }
 
-    public void createGameButtons(){
+
+    //*************************************************************
+    //
+    //  public void createGame()
+    //
+    //  Description:
+    //      Handles Logic of the game
+    //          1) Create image buttons with randomized images
+    //          2) Create click handler for each button
+    //              Onclick functionality:
+    //                  a) Store previous button clicked into LinkedList
+    //                  b) Compare resource ID's and change points accordingly
+    //
+    //
+    //**********************
+
+    public void createGame() {
 
         //
-        // game buttons
+        // HashMap for keeping the hidden resources "behind" the button
+        //
+        final HashMap<ImageButton, Integer> hidden_images = new HashMap<>(20);
+
+
+        //
+        // Array of game buttons
         //
         ImageButton[] imgButtons = new ImageButton[20];
 
-        //
-        // selected buttons
-        //
 
-        final List<ImageButton> selectedList = new ArrayList(2);
+        //
+        // List of previously selected button
+        //
+        final List<ImageButton> selectedList = new ArrayList(1);
 
+
+        //
+        // Layout for game to be inserted
+        //
         TableLayout tl = (TableLayout) findViewById(R.id.tableLayout);
 
-        int count = 0;
+
+
+        int id = 0;
         int rows = 5;
         int cols = 4;
 
-        for ( int i = 0  ;  i < rows  ;  i++ ) {
+
+        for (int i = 0; i < rows; i++) {
+
 
             TableRow tr = new TableRow(this);
 
-            for ( int j = 0  ;  j < cols  ;  j++ ) {
+            for (int j = 0; j < cols; j++) {
+
 
                 imgButtons[i] = new ImageButton(this);
+                imgButtons[i].setId(id++);
 
-                imgButtons[i].setId(count++);
+                imgButtons[i].setImageDrawable(
+
+                        ContextCompat.getDrawable(GameActivity.this, R.drawable.hiddenx)
+
+                );
 
                 //
-                // set preclicked image
+                // store image ID in map to check later
                 //
-                imgButtons[i].setBackgroundResource(R.drawable.hiddenx);
+
+                hidden_images.put(imgButtons[i],
+                        imageIDs.get(id - 1));
 
 
-                //
-                // store image ID and button to check matches later
-                //
-                hidden_images.put(imgButtons[i], imgIt.next());
+                imgButtons[i].setOnClickListener(
+
+                        new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
 
 
-
-                imgButtons[i].setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        ImageButton button = (ImageButton ) v;
+                                final View view = v;
+                                final ImageButton button = (ImageButton) v;
 
 
-                        button.setBackgroundResource(
-                                hidden_images.get(v)
-                        );
+                                button.setImageDrawable(
 
-                        if (selectedList.isEmpty()) {
+                                        ContextCompat.getDrawable(GameActivity.this, hidden_images.get(button))
 
-                            selectedList.add(button);
+                                );
 
-                        } else if (hidden_images.get(selectedList.get(0)).equals(hidden_images.get(button))) { //and their ID's are not the same
-                            Log.v("TRUE!", "ids matched!");
+                                //
+                                //  Checks if there was a button previously selected
+                                //  if not, add to list
+                                //
 
-//                            selectedList.get(0).getButtonDrawable().equals(button.getButtonDrawable())
-                            points++;
+                                if (selectedList.isEmpty()) {
 
-                            ImageButton secondButton = selectedList.get(0);
-                            secondButton.setBackgroundResource(
-                                    hidden_images.get(secondButton)
-                            );
+                                    selectedList.add(button);
 
+                                }
+                                else if (hidden_images.get(selectedList.get(0))
+                                                .equals(hidden_images.get(button))
+                                        &&
+                                        button.getId() != selectedList.get(0).getId())
 
-                            secondButton.setEnabled(false);
-                            button.setEnabled(false);
+                                {// Else if there is a button compare images and ID's
 
-                            secondButton.setBackgroundResource(R.drawable.check);
-                            button.setBackgroundResource(R.drawable.check);
-                            selectedList.remove(0);
-
-                        } else {
-                            Log.v("Not equal", "second button:" + hidden_images.get(selectedList.get(0))+"|button"+hidden_images.get(button));
-
-                            points--;
-
-                            ImageButton secondButton = selectedList.get(0);
+                                    //
+                                    // Correct! Add a point!
+                                    //
+                                    changePoints(1);
 
 
-                            button.setBackgroundResource(
-                                    hidden_images.get(button)
-                            );
+                                    ImageButton secondButton = selectedList.get(0);
+                                    secondButton.setImageDrawable(
+                                            ContextCompat.getDrawable(GameActivity.this, hidden_images.get(secondButton))
+                                    );
 
-//                                ContextCompat.getDrawable(GameActivity.this, hidden_images.get(secondButton))
+                                    //
+                                    //Remove buttons from play and replace with check
+                                    //
+                                    secondButton.setEnabled(false);
+
+                                    button.setEnabled(false);
+
+                                    correctButtons.add(secondButton);
+                                    correctButtons.add(button);
+
+                                    secondButton.setImageResource(R.drawable.check);
+                                    button.setImageResource(R.drawable.check);
+
+                                    //
+                                    // remove selected item
+                                    //
+                                    selectedList.remove(0);
+
+                                } else { //incorrect choice
+
+                                    changePoints(-1);
+
+                                    final ImageButton secondButton = selectedList.get(0);
 
 
-                            secondButton.setBackgroundResource(R.drawable.hiddenx);
-                            button.setBackgroundResource(R.drawable.hiddenx);
-                            selectedList.remove(0);
+                                    //
+                                    // Display the images
+                                    //
+                                    secondButton.setImageDrawable(
+                                            ContextCompat.getDrawable(GameActivity.this, hidden_images.get(secondButton))
+                                    );
+                                    button.setImageDrawable(
+                                            ContextCompat.getDrawable(GameActivity.this, hidden_images.get(button))
+                                    );
 
-                        }
 
+                                    //
+                                    // Thread to allow the incorrect images to be revealed
+                                    //
 
+                                    v.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                Thread.sleep(reveal_time);
+                                            } catch (Exception e) {
 
-                    }
-                });
+                                            }
+                                            secondButton.setImageDrawable(
+                                                    ContextCompat.getDrawable(GameActivity.this, R.drawable.hiddenx)
+                                            );
+                                            button.setImageDrawable(
+                                                    ContextCompat.getDrawable(GameActivity.this, R.drawable.hiddenx)
+                                            );
+                                        }
+                                    });
+
+                                    selectedList.remove(0);
+
+                                }
+
+                            }
+                        });
 
                 tr.addView(imgButtons[i]);
 
@@ -173,7 +268,47 @@ public class GameActivity extends AppCompatActivity{
             tl.addView(tr);
 
         }
+    }
 
+    public void changePoints(int p){
+        points += p;
+
+        TextView tv = (TextView) findViewById(R.id.score);
+        tv.setText("Points: " + points);
+    }
+
+
+    //
+    //
+    //  Handles screen rotation
+    //
+    //
+    //
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+
+//        savedInstanceState.put("MyBoolean", true);
+        savedInstanceState.putDouble("myDouble", 1.9);
+        savedInstanceState.putInt("MyInt", 1);
+        savedInstanceState.putString("MyString", "Welcome back to Android");
+        // etc.
+        super.onSaveInstanceState(savedInstanceState);
+    }
+    //onRestoreInstanceState
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        boolean myBoolean = savedInstanceState.getBoolean("MyBoolean");
+        double myDouble = savedInstanceState.getDouble("myDouble");
+        int myInt = savedInstanceState.getInt("MyInt");
+        String myString = savedInstanceState.getString("MyString");
     }
 
 }

@@ -12,25 +12,47 @@
     android:layout_centerInParent="true"
     android:gravity="center">
 
+
     <TextView
+        android:id="@+id/game_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/textView4"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_height="match_parent"
+        android:gravity="top|center"
+        android:paddingLeft="100dp"
+        android:paddingRight="100dp"
+        android:text="Memory Game"
+        android:textSize="23dp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="false" />
 
     <TableLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/tableLayout"
-        android:layout_alignParentEnd="true">
+        android:layout_marginTop="35dp"
+        android:stretchColumns="*"
+        android:shrinkColumns="1"
+            >
 
 
 
     </TableLayout>
 
+    <TextView
+        android:id="@+id/score"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="bottom|center"
+        android:paddingLeft="100dp"
+        android:paddingRight="100dp"
+        android:text="Points: 0"
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="false" />
 
 
 
