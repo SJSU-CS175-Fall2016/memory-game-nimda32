@@ -1,10 +1,13 @@
 package com.example.root.memorygame;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.CorrectionInfo;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -24,9 +27,15 @@ public class GameActivity extends AppCompatActivity {
 
     ArrayList<Integer> imageIDs = new ArrayList(20);
 
-    LinkedList<ImageButton> correctButtons = new LinkedList<>();
+    //wasted memory for screen rotation
+    HashMap<ImageButton, Integer> saved_button_images = new HashMap<>(20);
 
+    LinkedList<ImageButton> checkedButtons = new LinkedList<>();
 
+    //
+    // Array of game buttons
+    //
+    ImageButton[] imgButtons = new ImageButton[20];
 
 
     @Override
@@ -52,7 +61,7 @@ public class GameActivity extends AppCompatActivity {
     //          Loads Images from files into ArrayList
     //
     //
-    //****************************************
+    //*****************************************
 
     public void loadImages() {
 
@@ -79,6 +88,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
+
     //*************************************************************
     //
     //  public void createGame()
@@ -92,26 +102,21 @@ public class GameActivity extends AppCompatActivity {
     //                  b) Compare resource ID's and change points accordingly
     //
     //
-    //**********************
+    //*************************************************************
+
+    //
+    // HashMap for keeping the hidden resources "behind" the button
+    //
+    final HashMap<ImageButton, Integer> hidden_images = new HashMap<>(20);
+
+
+    //
+    // List of previously selected button
+    //
+    final List<ImageButton> selectedList = new ArrayList(1);
+
 
     public void createGame() {
-
-        //
-        // HashMap for keeping the hidden resources "behind" the button
-        //
-        final HashMap<ImageButton, Integer> hidden_images = new HashMap<>(20);
-
-
-        //
-        // Array of game buttons
-        //
-        ImageButton[] imgButtons = new ImageButton[20];
-
-
-        //
-        // List of previously selected button
-        //
-        final List<ImageButton> selectedList = new ArrayList(1);
 
 
         //
@@ -132,28 +137,26 @@ public class GameActivity extends AppCompatActivity {
             TableRow tr = new TableRow(this);
 
             for (int j = 0; j < cols; j++) {
+                if(firstRun) {
 
+                    imgButtons[i] = new ImageButton(this);
+                    imgButtons[i].setId(id++);
 
-                imgButtons[i] = new ImageButton(this);
-                imgButtons[i].setId(id++);
-
-                imgButtons[i].setImageDrawable(
+                    imgButtons[i].setImageDrawable(
 
                         ContextCompat.getDrawable(GameActivity.this, R.drawable.hiddenx)
 
-                );
+                    );
 
                 //
                 // store image ID in map to check later
                 //
 
-                hidden_images.put(imgButtons[i],
-                        imageIDs.get(id - 1));
+                    hidden_images.put(imgButtons[i],
+                            imageIDs.get(id - 1));
 
 
-                imgButtons[i].setOnClickListener(
-
-                        new View.OnClickListener() {
+                imgButtons[i].setOnClickListener(new View.OnClickListener() {
 
                             @Override
                             public void onClick(View v) {
@@ -204,8 +207,8 @@ public class GameActivity extends AppCompatActivity {
 
                                     button.setEnabled(false);
 
-                                    correctButtons.add(secondButton);
-                                    correctButtons.add(button);
+                                    checkedButtons.add(secondButton);
+                                    checkedButtons.add(button);
 
                                     secondButton.setImageResource(R.drawable.check);
                                     button.setImageResource(R.drawable.check);
@@ -261,14 +264,15 @@ public class GameActivity extends AppCompatActivity {
                             }
                         });
 
-                tr.addView(imgButtons[i]);
-
+                }
+                    tr.addView(imgButtons[i]);
             }
 
             tl.addView(tr);
-
         }
     }
+
+
 
     public void changePoints(int p){
         points += p;
@@ -284,6 +288,7 @@ public class GameActivity extends AppCompatActivity {
     //
     //
     //
+    boolean firstRun = true;
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -292,23 +297,36 @@ public class GameActivity extends AppCompatActivity {
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
 
-//        savedInstanceState.put("MyBoolean", true);
-        savedInstanceState.putDouble("myDouble", 1.9);
-        savedInstanceState.putInt("MyInt", 1);
-        savedInstanceState.putString("MyString", "Welcome back to Android");
-        // etc.
+        savedInstanceState.putSerializable("hashmap", hidden_images );
+        savedInstanceState.putSerializable("checkedbuttons", checkedButtons);
+        savedInstanceState.putSerializable("imgbuttons", imgButtons);
+        savedInstanceState.putInt("points",points);
+
         super.onSaveInstanceState(savedInstanceState);
     }
+
     //onRestoreInstanceState
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         // Restore UI state from the savedInstanceState.
         // This bundle has also been passed to onCreate.
-        boolean myBoolean = savedInstanceState.getBoolean("MyBoolean");
-        double myDouble = savedInstanceState.getDouble("myDouble");
-        int myInt = savedInstanceState.getInt("MyInt");
-        String myString = savedInstanceState.getString("MyString");
+
+        firstRun = false;
+
+        imgButtons = (ImageButton[]) savedInstanceState.getSerializable("imgbuttons");
+
+        hidden_images.putAll ((HashMap<ImageButton, Integer>) savedInstanceState.getSerializable("hashmap"));
+        checkedButtons.addAll((LinkedList<ImageButton>) savedInstanceState.getSerializable("checkedbuttons"));
+
+        for (ImageButton im : checkedButtons){
+            im.setEnabled(false);
+            im.setImageResource(R.drawable.check);
+
+        }
+
+        int p = savedInstanceState.getInt("points");
+        changePoints(p);
     }
 
 }
