@@ -22,7 +22,10 @@ public class GameActivity extends AppCompatActivity {
     int reveal_time = 500;
 
     ArrayList<Integer> imageIDs = new ArrayList(20);
-    
+
+    //
+    // List of correct answers
+    //
     LinkedList<Integer> checkedButtons = new LinkedList<>();
 
     //
@@ -133,8 +136,7 @@ public class GameActivity extends AppCompatActivity {
             for (int j = 0; j < cols; j++) {
 
                 imgButtons[i] = new ImageButton(this);
-                imgButtons[i].setId(id);
-                imgButtons[i].setTag(id++);
+                imgButtons[i].setId(id++);
 
                 imgButtons[i].setImageDrawable(
 
@@ -147,7 +149,7 @@ public class GameActivity extends AppCompatActivity {
                 //
                 if (firstRun) {
 
-                    hidden_images.put(imgButtons[i].getTag(),
+                    hidden_images.put(imgButtons[i].getId(),
                             imageIDs.get(id - 1));
                 }
 
@@ -163,7 +165,7 @@ public class GameActivity extends AppCompatActivity {
 
                         button.setImageDrawable(
 
-                                ContextCompat.getDrawable(GameActivity.this, hidden_images.get(button.getTag()))
+                                ContextCompat.getDrawable(GameActivity.this, hidden_images.get(button.getId()))
 
                         );
 
@@ -176,8 +178,8 @@ public class GameActivity extends AppCompatActivity {
 
                             selectedList.add(button);
 
-                        } else if (hidden_images.get(selectedList.get(0).getTag())
-                                .equals(hidden_images.get(button.getTag()))
+                        } else if (hidden_images.get(selectedList.get(0).getId())
+                                .equals(hidden_images.get(button.getId()))
                                 &&
                                 button.getId() != selectedList.get(0).getId())
 
@@ -191,7 +193,7 @@ public class GameActivity extends AppCompatActivity {
 
                             ImageButton secondButton = selectedList.get(0);
                             secondButton.setImageDrawable(
-                                    ContextCompat.getDrawable(GameActivity.this, hidden_images.get(secondButton.getTag()))
+                                    ContextCompat.getDrawable(GameActivity.this, hidden_images.get(secondButton.getId()))
                             );
 
                             //
@@ -223,10 +225,10 @@ public class GameActivity extends AppCompatActivity {
                             // Display the images
                             //
                             secondButton.setImageDrawable(
-                                    ContextCompat.getDrawable(GameActivity.this, hidden_images.get(secondButton.getTag()))
+                                    ContextCompat.getDrawable(GameActivity.this, hidden_images.get(secondButton.getId()))
                             );
                             button.setImageDrawable(
-                                    ContextCompat.getDrawable(GameActivity.this, hidden_images.get(button.getTag()))
+                                    ContextCompat.getDrawable(GameActivity.this, hidden_images.get(button.getId()))
                             );
 
 
