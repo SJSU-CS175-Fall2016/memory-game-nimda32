@@ -22,10 +22,7 @@ public class GameActivity extends AppCompatActivity {
     int reveal_time = 500;
 
     ArrayList<Integer> imageIDs = new ArrayList(20);
-
-    //wasted memory for screen rotation
-    HashMap<Integer, Integer> saved_button_images = new HashMap<>(20);
-
+    
     LinkedList<Integer> checkedButtons = new LinkedList<>();
 
     //
@@ -289,10 +286,6 @@ public class GameActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
 
-        // Save UI state changes to the savedInstanceState.
-        // This bundle will be passed to onCreate if the process is
-        // killed and restarted.
-
         savedInstanceState.putSerializable("hashmap", hidden_images);
         savedInstanceState.putSerializable("checkedbuttons", checkedButtons);
         savedInstanceState.putInt("points", points);
@@ -300,15 +293,11 @@ public class GameActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    //onRestoreInstanceState
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        // Restore UI state from the savedInstanceState.
-        // This bundle has also been passed to onCreate.
 
         firstRun = false;
-
 
         hidden_images.putAll((HashMap<Integer, Integer>) savedInstanceState.getSerializable("hashmap"));
         checkedButtons.addAll((LinkedList<Integer>) savedInstanceState.getSerializable("checkedbuttons"));
