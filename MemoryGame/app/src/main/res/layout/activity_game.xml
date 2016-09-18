@@ -22,6 +22,7 @@
         android:gravity="top|center"
         android:paddingLeft="100dp"
         android:paddingRight="100dp"
+        android:translationZ="@dimen/activity_horizontal_margin"
         android:text="Memory Game"
         android:textColor="@color/black"
         android:textSize="23dp"
