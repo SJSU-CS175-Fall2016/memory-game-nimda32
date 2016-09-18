@@ -25,7 +25,7 @@ public class GameActivity extends AppCompatActivity {
 
     //
     // HashMap for keeping the image "behind" the button
-    //  Key:    Button ID
+    //  Key   Button ID
     //  Value:  Image Resource ID
     //
     final HashMap<Integer, Integer> hidden_images = new HashMap<>(20);
@@ -65,12 +65,10 @@ public class GameActivity extends AppCompatActivity {
             hidden_images.putAll((HashMap<Integer, Integer>) extras.get("hashmap"));
             checkedButtons.addAll(extras.getIntegerArrayList("checkedbuttons"));
 
-            Log.v("siiize", " size: " + checkedButtons.size());
             Iterator cbit = checkedButtons.iterator();
             while (cbit.hasNext()) {
                 int id = (int) cbit.next();
 
-                Log.v("button", "" + id);
                 ImageButton a = (ImageButton) findViewById(id);
                 if (a.getId() >= 0) {
                     a.setEnabled(false);
@@ -83,7 +81,6 @@ public class GameActivity extends AppCompatActivity {
 
 
         }
-
 
 
         //
