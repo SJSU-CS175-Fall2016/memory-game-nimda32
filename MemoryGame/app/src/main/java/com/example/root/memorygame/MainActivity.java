@@ -2,13 +2,13 @@ package com.example.root.memorygame;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -41,15 +41,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startGame(View v) {
+        final Intent intent = new Intent(MainActivity.this, GameActivity.class);
 
-        Intent intent = new Intent(MainActivity.this, GameActivity.class);
-        if(!hidden_images.isEmpty()) {
-            intent.putExtra("hashmap", hidden_images);
-            intent.putExtra("checkedbuttons", checkedButtons);
-            intent.putExtra("points", points);
-        }
-        startActivity(intent);
-        finish();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                MainActivity.this);
+
+        // set title
+        alertDialogBuilder.setTitle("Resume Game?");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("")
+                .setCancelable(false)
+                .setPositiveButton("No",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, close
+                        // current activity
+                        startActivity(intent);
+                        MainActivity.this.finish();
+
+                    }
+                })
+                .setNegativeButton("Yes",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        if (!hidden_images.isEmpty()) {
+                            intent.putExtra("hashmap", hidden_images);
+                            intent.putExtra("checkedbuttons", checkedButtons);
+                            intent.putExtra("points", points);
+                        }
+                        startActivity(intent);
+
+                        MainActivity.this.finish();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+
+
+
+
+
 
     }
 
